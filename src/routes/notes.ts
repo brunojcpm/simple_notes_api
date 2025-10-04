@@ -1,22 +1,28 @@
 import { Router, Request, Response } from "express";
 import { Note } from "../models/note";
 import { prisma } from "../prisma";
+import { NoteSchema } from "../schemas/note.schema";
+import { ZodError } from "zod";
 
 const router = Router();
 
 // Criar nota
 router.post("/", async (req: Request, res: Response) => {
-    const { title, content } = req.body;
+    try {
+        const data = NoteSchema.parse(req.body);
 
-    if (!title || !content) {
-        return res.status(400).json({ error: "title and content required" });
+        const note = await prisma.note.create({
+            data,
+        });
+
+        res.status(201).json(note);
+    } catch (error) {
+        if (error instanceof ZodError) {
+            return res.status(400).json({ message: error.issues[0].message });
+        }
+
+        res.status(500).json({ message: "Internal server error" });
     }
-
-    const note = await prisma.note.create({
-        data: { title, content },
-    });
-
-    res.status(201).json(note);
 });
 
 // Listar todas

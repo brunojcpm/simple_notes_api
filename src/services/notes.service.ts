@@ -1,5 +1,5 @@
-import { prisma } from "../prisma";
-import { NoteInput } from "../schemas/note.schema";
+import { prisma } from "../database/prisma";
+import { NoteInput } from "../database/schemas/note.schema";
 
 export class NotesService {
     async create({ data }: { data: NoteInput }) {

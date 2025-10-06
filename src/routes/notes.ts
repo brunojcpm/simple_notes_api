@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
-import { prisma } from "../prisma";
-import { NoteSchema } from "../schemas/note.schema";
+import { prisma } from "../database/prisma";
+import { NoteSchema } from "../database/schemas/note.schema";
 import { ZodError } from "zod";
 import { notesService } from "../services/notes.service";
 

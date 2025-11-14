@@ -1,0 +1,47 @@
+{
+  "name": "hono",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon --watch 'src/**/*.ts' --exec ts-node -r tsconfig-paths/register -r dotenv/config src/server.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    
+    "knex": "npx --node-options='-r ts-node/register -r tsconfig-paths/register -r dotenv/config' knex",
+    "migration:create": "pnpm run knex migrate:make --knexfile knexfile.ts -x ts",
+    "migration:status": "pnpm run knex migrate:status --knexfile knexfile.ts",
+    "migrate:up": "pnpm run knex --knexfile knexfile.ts migrate:up",
+    "migrate:down": "pnpm run knex --knexfile knexfile.ts migrate:down",
+    "migrate:latest": "pnpm run knex --knexfile knexfile.ts migrate:latest",
+    "migrate:rollback": "pnpm run knex --knexfile knexfile.ts migrate:rollback",
+    "migrate:drop": "pnpm run knex migrate:rollback --all",
+    
+    "seed": "pnpm run knex --knexfile knexfile.ts seed:run",
+    "seed:create": "pnpm run knex seed:make --knexfile knexfile.ts -x ts",
+    
+    "lint": "biome check --write",
+    "lint:force": "pnpm run lint --unsafe",
+    "lint:verify": "biome check"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.15.0",
+  "dependencies": {
+    "@hono/node-server": "^1.17.1",
+    "cors": "^2.8.5",
+    "hono": "^4.10.5",
+    "knex": "^3.1.0",
+    "pg": "^8.16.3",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.5",
+    "@types/node": "^24.10.1",
+    "dotenv": "^17.2.3",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}

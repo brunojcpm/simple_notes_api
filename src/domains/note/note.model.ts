@@ -1,8 +1,8 @@
 import z from 'zod';
 
-export const eventSchema = z.object({
+export const noteSchema = z.object({
   title: z.string().nonempty('Title is required'),
   content: z.string().nullable(),
 });
 
-export type Event = z.infer<typeof eventSchema>;
+export type Note = z.infer<typeof noteSchema>;

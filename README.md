@@ -5,12 +5,12 @@ Uma API REST moderna para gerenciamento de notas desenvolvida com Hono, TypeScri
 ## 📋 Funcionalidades
 
 - ✅ Criar notas
-- ⏳ Listar todas as notas
-- ⏳ Buscar nota por ID
-- ⏳ Atualizar nota
-- ⏳ Deletar nota
+- ✅ Listar todas as notas
+- ✅ Buscar nota por ID
+- ✅ Atualizar nota
+- ✅ Deletar nota
 
-> **Status**: Projeto em desenvolvimento ativo. Atualmente implementado apenas o endpoint de criação de notas.
+> **Status**: API CRUD completa implementada com arquitetura limpa, casos de uso e validações robustas.
 
 ## 🛠 Stack Tecnológica
 
@@ -40,12 +40,19 @@ Uma API REST moderna para gerenciamento de notas desenvolvida com Hono, TypeScri
 ```
 simple_notes_api/
 ├── src/
-│   ├── controllers/           # Controladores (handlers de requisições)
+│   ├── controllers/           # Controladores (handlers de requisições HTTP)
 │   │   └── notes.controller.ts
-│   ├── domains/               # Modelos de domínio e regras de negócio
+│   ├── domains/               # Domínios e regras de negócio
 │   │   └── note/
-│   │       └── note.model.ts
-│   ├── main/                  # Configurações principais
+│   │       ├── entities/      # Entidades do domínio
+│   │       │   └── note.entity.ts
+│   │       └── use-cases/     # Casos de uso (regras de negócio)
+│   │           ├── create-note.use-case.ts
+│   │           ├── delete-note.use-case.ts
+│   │           ├── get-note-by-id.use-case.ts
+│   │           ├── get-notes.use-case.ts
+│   │           └── update-note.use-case.ts
+│   ├── main/                  # Configurações principais e infraestrutura
 │   │   ├── config/
 │   │   │   └── app.ts         # Configuração do app Hono
 │   │   └── routes/
@@ -65,11 +72,14 @@ simple_notes_api/
 
 ### Padrões de Arquitetura
 
-- **Domain-Driven Design (DDD)** - Organização por domínios
-- **Clean Architecture** - Separação clara de responsabilidades
-- **Controllers** - Manipulam requisições HTTP
-- **Models** - Definem estrutura e validação de dados
-- **Routers** - Organizam e agrupam rotas relacionadas
+- **Clean Architecture** - Separação clara entre camadas (Controllers, Use Cases, Entities)
+- **Domain-Driven Design (DDD)** - Organização por domínios de negócio
+- **Use Cases Pattern** - Encapsulamento de regras de negócio em casos de uso específicos
+- **Dependency Injection** - Inversão de dependências para melhor testabilidade
+- **Entity Pattern** - Entidades ricas com validação através do Zod
+- **UUID v7** - Identificadores únicos ordenáveis por tempo de criação
+- **Controllers** - Manipulam requisições HTTP e delegam para casos de uso
+- **Routers** - Organizam e agrupam rotas relacionadas por domínio
 
 ## 🚀 Como executar
 
@@ -147,10 +157,10 @@ http://localhost:3000
 | Método | Endpoint | Descrição | Status |
 |--------|----------|-----------|---------|
 | `POST` | `/notes` | Criar uma nova nota | ✅ Implementado |
-| `GET` | `/notes` | Listar todas as notas | ⏳ Em desenvolvimento |
-| `GET` | `/notes/:id` | Buscar nota por ID | ⏳ Em desenvolvimento |
-| `PUT` | `/notes/:id` | Atualizar nota | ⏳ Em desenvolvimento |
-| `DELETE` | `/notes/:id` | Deletar nota | ⏳ Em desenvolvimento |
+| `GET` | `/notes` | Listar todas as notas | ✅ Implementado |
+| `GET` | `/notes/:id` | Buscar nota por ID | ✅ Implementado |
+| `PUT` | `/notes/:id` | Atualizar nota | ✅ Implementado |
+| `DELETE` | `/notes/:id` | Deletar nota | ✅ Implementado |
 
 ### Exemplos de uso
 
@@ -177,20 +187,86 @@ curl -X POST http://localhost:3000/notes \
 **Resposta:**
 ```json
 {
-  "message": "Note created",
+  "message": "Note created successfully",
+  "noteId": "01JCX8K9M2NQZP8X7V5W3Y1B4C"
+}
+```
+
+#### Listar todas as notas
+```bash
+curl http://localhost:3000/notes
+```
+
+**Resposta:**
+```json
+{
+  "message": "Notes loaded successfully",
+  "notes": [
+    {
+      "id": "01JCX8K9M2NQZP8X7V5W3Y1B4C",
+      "title": "Minha primeira nota",
+      "content": "Conteúdo da nota aqui",
+      "created_at": "2024-11-14T19:30:00.000Z",
+      "updated_at": "2024-11-14T19:30:00.000Z"
+    }
+  ]
+}
+```
+
+#### Buscar nota por ID
+```bash
+curl http://localhost:3000/notes/01JCX8K9M2NQZP8X7V5W3Y1B4C
+```
+
+**Resposta:**
+```json
+{
+  "message": "Note loaded successfully",
   "note": {
+    "id": "01JCX8K9M2NQZP8X7V5W3Y1B4C",
     "title": "Minha primeira nota",
-    "content": "Conteúdo da nota aqui"
+    "content": "Conteúdo da nota aqui",
+    "created_at": "2024-11-14T19:30:00.000Z",
+    "updated_at": "2024-11-14T19:30:00.000Z"
   }
+}
+```
+
+#### Atualizar nota
+```bash
+curl -X PUT http://localhost:3000/notes/01JCX8K9M2NQZP8X7V5W3Y1B4C \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Título atualizado",
+    "content": "Conteúdo atualizado da nota"
+  }'
+```
+
+**Resposta:**
+```json
+{
+  "message": "Note updated successfully"
+}
+```
+
+#### Deletar nota
+```bash
+curl -X DELETE http://localhost:3000/notes/01JCX8K9M2NQZP8X7V5W3Y1B4C
+```
+
+**Resposta:**
+```json
+{
+  "message": "Note deleted successfully"
 }
 ```
 
 ## 🗄 Modelo de dados
 
-### Note
+### Note Entity
 ```typescript
 interface Note {
-  id: string;          // UUID único da nota
+  id: string;          // UUID v7 único e ordenável por tempo
   title: string;       // Título da nota (obrigatório)
   content: string;     // Conteúdo da nota (obrigatório)
   created_at: Date;    // Data de criação (automática)
@@ -198,12 +274,27 @@ interface Note {
 }
 ```
 
-### Validação Zod
+### Schemas de Validação
+
+#### Criação de Nota
 ```typescript
-const eventSchema = z.object({
-  title: z.string().nonempty('Title is required'),
-  content: z.string().nullable(),
+const createNoteSchema = z.object({
+  title: z.string().min(1, 'Title is required').max(255),
+  content: z.string().min(1, 'Content is required'),
 });
+```
+
+#### Atualização de Nota
+```typescript
+const updateNoteSchema = z.object({
+  title: z.string().min(1, 'Title is required').max(255),
+  content: z.string().min(1, 'Content is required'),
+});
+```
+
+#### Validação de UUID
+```typescript
+const uuidV7Schema = z.string().uuid('Invalid UUID format');
 ```
 
 ## 📝 Scripts disponíveis

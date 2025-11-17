@@ -10,13 +10,7 @@
     "attributePosition": "auto"
   },
   "files": {
-    "includes": [
-      "**/database/*",
-      "**/src/domains/**/*",
-      "**/src/controllers/*",
-      "**/src/main/**/*",
-      "**/src/server.ts"
-    ]
+    "includes": ["database/*", "src/*"]
   },
   "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {

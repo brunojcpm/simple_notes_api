@@ -33,11 +33,8 @@
     "rootDir": ".",
     "outDir": "dist",
     "paths": {
-      "@/*": ["./src/*"],
-      "@domain/*": ["./src/domains/*"],
-      "@controller/*": ["./src/controller/*"],
-      "@main/*": ["./src/main/*"],
-      "@route/*": ["./src/route/*"],
+      "@/*": ["src/*"],
+      "@database/*": ["database/*"],
     }
   },
   "include": [

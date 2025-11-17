@@ -1,7 +1,22 @@
 import { Hono } from 'hono';
+import type { ContentfulStatusCode } from 'hono/utils/http-status';
+import { HttpErrorResponseBuilder } from '@/errors/http-error-response.builder';
 import { makeNotesRouter } from '../routes/notes.router';
 
 const app = new Hono();
+
+app.onError((error, context) => {
+  const errorResponse = HttpErrorResponseBuilder.withError(error).build();
+
+  if (errorResponse.statusCode === 500) {
+    console.error('An unknown error occurred', error);
+  }
+
+  return context.json(
+    errorResponse.body,
+    errorResponse.statusCode as ContentfulStatusCode,
+  );
+});
 
 app.notFound((context) =>
   context.json(
@@ -18,8 +33,8 @@ app.use('*', async (context, next) => {
   await next();
 });
 
-app.get('/ping', (context) => {
-  return context.text('Pong!', 200);
+app.get('/health-check', (context) => {
+  return context.text('OK!', 200);
 });
 
 app.route('/notes', makeNotesRouter());

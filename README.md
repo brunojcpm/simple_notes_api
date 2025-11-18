@@ -91,6 +91,32 @@ simple_notes_api/
 
 ### Instalação e Configuração
 
+#### 🚀 Setup Automatizado (Recomendado)
+
+1. **Clone o repositório**
+   ```bash
+   git clone https://github.com/brunojcpm/simple_notes_api.git
+   cd simple_notes_api
+   ```
+
+2. **Setup completo automatizado**
+   ```bash
+   pnpm run setup
+   ```
+   
+   Este comando executa automaticamente:
+   - ✅ Instalação de dependências (`pnpm install --frozen-lockfile`)
+   - ✅ Inicialização do PostgreSQL via Docker (`docker compose up -d`)
+   - ✅ Execução de migrações (`pnpm run migrate:latest`)
+   - ✅ População com dados de exemplo (`pnpm run seed`)
+
+3. **Inicie o servidor de desenvolvimento**
+   ```bash
+   pnpm run dev
+   ```
+
+#### 🔧 Setup Manual
+
 1. **Clone o repositório**
    ```bash
    git clone https://github.com/brunojcpm/simple_notes_api.git
@@ -111,16 +137,21 @@ simple_notes_api/
    
    Edite o arquivo `.env`:
    ```env
-   DATABASE_URL="postgresql://postgres:password@localhost:5432/simple_notes_db"
+   DATABASE_URL="postgresql://postgres:123456@localhost:5432/backend_learning"
    PORT=3000
-   JWT_SECRET="your-secret-key-here"
+   JWT_SECRET="supersecreto123"
    ```
 
 4. **Configure o banco de dados**
    
-   Crie o banco de dados no PostgreSQL:
+   **Opção A: PostgreSQL com Docker (Recomendado)**
+   ```bash
+   pnpm run setup:services
+   ```
+   
+   **Opção B: PostgreSQL Local**
    ```sql
-   CREATE DATABASE simple_notes_db;
+   CREATE DATABASE backend_learning;
    ```
 
 5. **Execute as migrações**
@@ -150,7 +181,7 @@ http://localhost:3000
 ### Health Check
 | Método | Endpoint | Descrição |
 |--------|----------|-----------|
-| `GET` | `/ping` | Verificação de saúde da API |
+| `GET` | `/health-check` | Verificação de saúde da API |
 
 ### Notas
 
@@ -166,12 +197,12 @@ http://localhost:3000
 
 #### Health Check
 ```bash
-curl http://localhost:3000/ping
+curl http://localhost:3000/health-check
 ```
 
 **Resposta:**
 ```
-Pong!
+OK!
 ```
 
 #### Criar nota
@@ -187,8 +218,12 @@ curl -X POST http://localhost:3000/notes \
 **Resposta:**
 ```json
 {
-  "message": "Note created successfully",
-  "noteId": "01JCX8K9M2NQZP8X7V5W3Y1B4C"
+  "message": "note created",
+  "note": {
+    "id": "01JCX8K9M2NQZP8X7V5W3Y1B4C",
+    "title": "Minha primeira nota",
+    "content": "Conteúdo da nota aqui"
+  }
 }
 ```
 
@@ -199,18 +234,15 @@ curl http://localhost:3000/notes
 
 **Resposta:**
 ```json
-{
-  "message": "Notes loaded successfully",
-  "notes": [
-    {
-      "id": "01JCX8K9M2NQZP8X7V5W3Y1B4C",
-      "title": "Minha primeira nota",
-      "content": "Conteúdo da nota aqui",
-      "created_at": "2024-11-14T19:30:00.000Z",
-      "updated_at": "2024-11-14T19:30:00.000Z"
-    }
-  ]
-}
+[
+  {
+    "id": "01JCX8K9M2NQZP8X7V5W3Y1B4C",
+    "title": "Minha primeira nota",
+    "content": "Conteúdo da nota aqui",
+    "created_at": "2024-11-14T19:30:00.000Z",
+    "updated_at": "2024-11-14T19:30:00.000Z"
+  }
+]
 ```
 
 #### Buscar nota por ID
@@ -221,14 +253,11 @@ curl http://localhost:3000/notes/01JCX8K9M2NQZP8X7V5W3Y1B4C
 **Resposta:**
 ```json
 {
-  "message": "Note loaded successfully",
-  "note": {
-    "id": "01JCX8K9M2NQZP8X7V5W3Y1B4C",
-    "title": "Minha primeira nota",
-    "content": "Conteúdo da nota aqui",
-    "created_at": "2024-11-14T19:30:00.000Z",
-    "updated_at": "2024-11-14T19:30:00.000Z"
-  }
+  "id": "01JCX8K9M2NQZP8X7V5W3Y1B4C",
+  "title": "Minha primeira nota",
+  "content": "Conteúdo da nota aqui",
+  "created_at": "2024-11-14T19:30:00.000Z",
+  "updated_at": "2024-11-14T19:30:00.000Z"
 }
 ```
 
@@ -245,7 +274,9 @@ curl -X PUT http://localhost:3000/notes/01JCX8K9M2NQZP8X7V5W3Y1B4C \
 **Resposta:**
 ```json
 {
-  "message": "Note updated successfully"
+  "id": "01JCX8K9M2NQZP8X7V5W3Y1B4C",
+  "title": "Título atualizado",
+  "content": "Conteúdo atualizado da nota"
 }
 ```
 
@@ -257,7 +288,7 @@ curl -X DELETE http://localhost:3000/notes/01JCX8K9M2NQZP8X7V5W3Y1B4C
 **Resposta:**
 ```json
 {
-  "message": "Note deleted successfully"
+  "message": "note deleted"
 }
 ```
 
@@ -299,8 +330,11 @@ const uuidV7Schema = z.string().uuid('Invalid UUID format');
 
 ## 📝 Scripts disponíveis
 
-### Desenvolvimento
+### Setup e Desenvolvimento
+- `pnpm run setup` - **Setup completo automatizado** (instala deps, inicia Docker, executa migrações e seeds)
+- `pnpm run setup:services` - Inicia apenas o PostgreSQL via Docker Compose
 - `pnpm run dev` - Inicia o servidor em modo de desenvolvimento com hot reload
+- `pnpm run build` - Compila o projeto TypeScript para JavaScript
 
 ### Banco de dados
 - `pnpm run migrate:latest` - Executa todas as migrações pendentes
@@ -334,15 +368,33 @@ const uuidV7Schema = z.string().uuid('Invalid UUID format');
    DATABASE_URL="postgresql://user:password@localhost:5432/simple_notes_db"
    ```
 
-### PostgreSQL com Docker
+### PostgreSQL com Docker (Recomendado)
 
+#### Usando Docker Compose (Automático)
+```bash
+pnpm run setup:services
+```
+
+#### Usando Docker manualmente
 ```bash
 docker run --name postgres-notes \
-  -e POSTGRES_DB=simple_notes_db \
+  -e POSTGRES_DB=backend_learning \
   -e POSTGRES_USER=postgres \
   -e POSTGRES_PASSWORD=123456 \
   -p 5432:5432 \
-  -d postgres:15
+  -d postgres:17.1-alpine
+```
+
+#### Docker Compose completo
+```bash
+# Inicializar todos os serviços (API + PostgreSQL)
+docker compose up -d
+
+# Para parar os serviços
+docker compose down
+
+# Para rebuildar após mudanças
+docker compose up --build
 ```
 
 ## 🏗️ Padrões de código
@@ -388,6 +440,40 @@ Planejado para implementar:
 - [ ] Testes unitários com Jest/Vitest
 - [ ] Testes de integração
 - [ ] Testes de endpoint
+
+## 🐳 Docker
+
+### Executando com Docker
+
+1. **Build da imagem Docker**
+   ```bash
+   docker build -t simple-notes-api .
+   ```
+
+2. **Executar container individual**
+   ```bash
+   docker run -p 3000:3000 \
+     -e DATABASE_URL="postgresql://postgres:123456@localhost:5432/backend_learning" \
+     -e PORT=3000 \
+     simple-notes-api
+   ```
+
+3. **Executar com Docker Compose** (Recomendado)
+   ```bash
+   # Primeira execução
+   docker compose up --build
+   
+   # Execuções subsequentes
+   docker compose up -d
+   ```
+
+### Estrutura do Docker
+
+- **Multi-stage build** para otimização de tamanho
+- **Node.js 22 Alpine** (imagem leve)
+- **pnpm** como gerenciador de pacotes
+- **Build stage** separado do runtime
+- **Configurações otimizadas** para produção
 
 ## 🚀 Deployment
 
@@ -441,8 +527,14 @@ Este projeto está sob a licença ISC.
 
 ## 🔮 Roadmap
 
+### Funcionalidades Implementadas
+- [x] 📝 **CRUD completo de notas** - ✅ Implementado
+- [x] 🐳 **Dockerização** - ✅ Docker + Docker Compose
+- [x] ⚙️ **Setup automatizado** - ✅ Script `pnpm run setup`
+- [x] 🏗️ **Build pipeline** - ✅ TypeScript compilation
+- [x] 🔧 **Configuração robusta** - ✅ Path mapping, Biome, etc.
+
 ### Funcionalidades Planejadas
-- [ ] 📝 CRUD completo de notas
 - [ ] 🔍 Sistema de busca e filtros
 - [ ] 🏷️ Tags para categorização
 - [ ] 👤 Sistema de autenticação JWT
@@ -450,7 +542,6 @@ Este projeto está sob a licença ISC.
 - [ ] 🔄 Soft delete para notas
 - [ ] 📊 Logs estruturados
 - [ ] 🧪 Suite de testes completa
-- [ ] 🐳 Dockerização
 - [ ] 📖 Documentação OpenAPI/Swagger
 
 ### Melhorias Técnicas

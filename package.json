@@ -4,8 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "setup": "pnpm install --frozen-lockfile && pnpm run setup:services && pnpm run migrate:latest && pnpm run seed",
+    "setup:services": "docker compose up -d --wait --wait-timeout 30",
     "dev": "nodemon --watch 'src/**/*.ts' --exec ts-node -r tsconfig-paths/register -r dotenv/config src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx tsc && npx tsc-alias",
     "knex": "npx --node-options='-r ts-node/register -r tsconfig-paths/register -r dotenv/config' knex",
     "migration:create": "pnpm run knex migrate:make --knexfile knexfile.ts -x ts",
     "migration:status": "pnpm run knex migrate:status --knexfile knexfile.ts",
@@ -27,6 +30,7 @@
   "dependencies": {
     "@hono/node-server": "^1.17.1",
     "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
     "hono": "^4.10.5",
     "knex": "^3.1.0",
     "pg": "^8.16.3",
@@ -36,7 +40,6 @@
   "devDependencies": {
     "@biomejs/biome": "^2.3.5",
     "@types/node": "^24.10.1",
-    "dotenv": "^17.2.3",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "tsx": "^4.20.6",

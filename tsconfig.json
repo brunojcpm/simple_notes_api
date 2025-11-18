@@ -34,7 +34,6 @@
     "outDir": "dist",
     "paths": {
       "@/*": ["src/*"],
-      "@database/*": ["database/*"],
     }
   },
   "include": [
@@ -44,6 +43,7 @@
     "jest.config.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "dist/**/*"
   ],
 }

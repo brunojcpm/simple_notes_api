@@ -1,6 +1,9 @@
 services:
   api:
-    build: -t simple-notes-image .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: simple-notes-image
     container_name: simple-notes
     ports:
       - 3000:3000
